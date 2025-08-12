@@ -31,7 +31,7 @@ export default function Home() {
             You can type &quot;?&quot; for a connections round tile.
           </p>
         </div>
-        <div className="flex justify-center">
+        <div className="flex justify-center flex-wrap gap-4">
           <TextCanvas text={text} width={410} height={240} />
         </div>
         <div className="flex justify-center">
@@ -41,12 +41,16 @@ export default function Home() {
               if (!canvas) return;
               try {
                 const btn = e.currentTarget;
-                const blob = await new Promise<Blob>((resolve) =>
-                  canvas.toBlob((blob) => (blob ? resolve(blob) : null))
+                console.log("hello");
+                await new Promise<Blob>((resolve, reject) =>
+                  canvas.toBlob(async (blob) => {
+                    if (!blob) return reject(new Error("No blob"));
+                    await navigator.clipboard.write([
+                      new ClipboardItem({ "image/png": blob }),
+                    ]);
+                    return resolve(blob);
+                  })
                 );
-                await navigator.clipboard.write([
-                  new ClipboardItem({ "image/png": blob }),
-                ]);
                 const originalText = btn.textContent;
                 btn.textContent = "Copied!";
                 setTimeout(() => {
