@@ -39,15 +39,14 @@ export default function Home() {
             onClick={async (e) => {
               const canvas = document.querySelector("canvas");
               if (!canvas) return;
-
               try {
+                const btn = e.currentTarget;
                 const blob = await new Promise<Blob>((resolve) =>
                   canvas.toBlob((blob) => (blob ? resolve(blob) : null))
                 );
                 await navigator.clipboard.write([
                   new ClipboardItem({ "image/png": blob }),
                 ]);
-                const btn = e.currentTarget;
                 const originalText = btn.textContent;
                 btn.textContent = "Copied!";
                 setTimeout(() => {
