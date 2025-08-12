@@ -90,6 +90,11 @@ export default function TextCanvas({
     };
 
     loadAndDraw();
+    canvas.toBlob((blob) => {
+      if (blob) {
+        (globalThis as unknown as { myBlob: Blob }).myBlob = blob;
+      }
+    });
   }, [text, width, height]);
 
   return (

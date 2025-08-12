@@ -42,15 +42,13 @@ export default function Home() {
               try {
                 const btn = e.currentTarget;
                 console.log("hello");
-                await new Promise<Blob>((resolve, reject) =>
-                  canvas.toBlob(async (blob) => {
-                    if (!blob) return reject(new Error("No blob"));
-                    await navigator.clipboard.write([
-                      new ClipboardItem({ "image/png": blob }),
-                    ]);
-                    return resolve(blob);
-                  })
-                );
+
+                await navigator.clipboard.write([
+                  new ClipboardItem({
+                    "image/png": (globalThis as unknown as { myBlob: Blob })
+                      .myBlob,
+                  }),
+                ]);
                 const originalText = btn.textContent;
                 btn.textContent = "Copied!";
                 setTimeout(() => {
