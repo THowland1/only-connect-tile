@@ -1,8 +1,9 @@
 {
+   "$schema": "https://openapi.vercel.sh/vercel.json",
   "redirects": [
     {
       "source": "/(.*)",
-      "destination": "https://only-connect-tile.netlify.app/:1",
+      "destination": "https://only-connect-tile.netlify.app",
       "permanent": true
     }
   ]
