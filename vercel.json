@@ -1,0 +1,9 @@
+{
+  "redirects": [
+    {
+      "source": "/(.*)",
+      "destination": "https://only-connect-tile.netlify.app/:1",
+      "permanent": true
+    }
+  ]
+}
