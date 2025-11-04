@@ -236,9 +236,17 @@ async function clipboardToImage(): Promise<HTMLImageElement | string> {
   if (!firstItem) {
     return "Clipboard empty!";
   }
-  const image = await firstItem.getType("image/*");
-  if (!image) {
+  const firstImageType = firstItem.types.find((type) =>
+    type.startsWith("image/")
+  );
+  if (!firstImageType) {
     return "No image in clipboard!";
   }
-  return fileToImage(new File([image], "clipboard.png"));
+  const image = await firstItem.getType(firstImageType);
+  if (!image) {
+    return "No image by type in clipboard!";
+  }
+  return fileToImage(
+    new File([image], `clipboard.${firstImageType.split("/")[1]}`)
+  );
 }
