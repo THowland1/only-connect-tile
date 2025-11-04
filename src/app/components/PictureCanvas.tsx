@@ -5,12 +5,14 @@ import { useEffect, useRef, useState } from "react";
 
 interface PictureCanvasProps {
   image: HTMLImageElement | null;
+  fitOrCover?: "fit" | "cover";
   width?: number;
   height?: number;
 }
 
 export default function PictureCanvas({
   image,
+  fitOrCover = "cover",
   width = 410,
   height = 240,
 }: PictureCanvasProps) {
@@ -50,15 +52,52 @@ export default function PictureCanvas({
         roundedRectPath(ctx, x, y, w, h, 8);
         ctx.clip();
 
+        // Takes in fitOrCover: "fit" for object-fit: contain, "cover" for object-fit: cover
+        // Default to "cover" if not provided
+
         const bgAspectRatio = w / h;
-        const aspectRatio = testCardImage.width / testCardImage.height;
-        const dw = aspectRatio < bgAspectRatio ? w : h * aspectRatio;
-        const dh = aspectRatio > bgAspectRatio ? h : w / aspectRatio;
+        const imageAspectRatio = testCardImage.width / testCardImage.height;
 
-        const offsetX = (w - dw) / 2;
-        const offsetY = (h - dh) / 2;
+        if (fitOrCover === "cover") {
+          // "cover" logic: fill area while cropping as necessary
+          let drawWidth, drawHeight, sx, sy, sWidth, sHeight;
+          if (imageAspectRatio > bgAspectRatio) {
+            // Image is wider -- crop horizontally
+            drawHeight = testCardImage.height;
+            drawWidth = drawHeight * bgAspectRatio;
+            sx = (testCardImage.width - drawWidth) / 2;
+            sy = 0;
+            sWidth = drawWidth;
+            sHeight = drawHeight;
+          } else {
+            // Image is taller -- crop vertically
+            drawWidth = testCardImage.width;
+            drawHeight = drawWidth / bgAspectRatio;
+            sx = 0;
+            sy = (testCardImage.height - drawHeight) / 2;
+            sWidth = drawWidth;
+            sHeight = drawHeight;
+          }
+          ctx.drawImage(testCardImage, sx, sy, sWidth, sHeight, x, y, w, h);
+        } else {
+          // "fit" logic: fit entire image, add letterbox/pillarbox if needed (object-fit: contain)
+          let dw, dh, offsetX, offsetY;
+          if (imageAspectRatio > bgAspectRatio) {
+            // Image is wider -- constrain by width
+            dw = w;
+            dh = w / imageAspectRatio;
+            offsetX = 0;
+            offsetY = (h - dh) / 2;
+          } else {
+            // Image is taller -- constrain by height
+            dh = h;
+            dw = h * imageAspectRatio;
+            offsetX = (w - dw) / 2;
+            offsetY = 0;
+          }
+          ctx.drawImage(testCardImage, x + offsetX, y + offsetY, dw, dh);
+        }
 
-        ctx.drawImage(testCardImage, x + offsetX, y + offsetY, dw, dh);
         ctx.restore();
       }
 
@@ -75,7 +114,7 @@ export default function PictureCanvas({
         const img = new Image();
         img.onload = () => resolve(img);
         img.onerror = reject;
-        img.src = "/tile_410x240.png"; // from public/
+        img.src = "/default-picture_410x240.png"; // from public/
       });
 
     const loadAndDraw = async () => {
@@ -92,7 +131,7 @@ export default function PictureCanvas({
     };
 
     loadAndDraw();
-  }, [image, width, height]);
+  }, [image, width, height, fitOrCover]);
   const [objectUrl, setObjectUrl] = useState<string>(
     "/default-picture_410x240.png"
   );

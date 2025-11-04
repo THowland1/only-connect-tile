@@ -8,6 +8,7 @@ export default function Home() {
   const [text, setText] = useState("Hello World");
   const [image, setImage] = useState<HTMLImageElement | null>(null);
   const [mode, setMode] = useState<"Text" | "Picture">("Text");
+  const [fitOrCover, setFitOrCover] = useState<"fit" | "cover">("cover");
   return (
     <div className="min-h-screen bg-[#CCE7FA] py-8 px-4 text-[#143159]">
       <div className="max-w-2xl mx-auto">
@@ -147,6 +148,25 @@ export default function Home() {
                     </span>
                   </div>
                 </div>
+                <div className="mt-2">
+                  <label
+                    htmlFor="fit-or-cover-select"
+                    className="text-sm font-medium"
+                  >
+                    Fit or Cover:
+                  </label>
+                  <select
+                    id="fit-or-cover-select"
+                    value={fitOrCover}
+                    onChange={(e) =>
+                      setFitOrCover(e.target.value as "fit" | "cover")
+                    }
+                    className="w-full text-black px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                  >
+                    <option value="fit">Fit</option>
+                    <option value="cover">Cover</option>
+                  </select>
+                </div>
               </div>
             )}
           </div>
@@ -156,7 +176,12 @@ export default function Home() {
             <TextCanvas text={text} width={410} height={240} />
           )}
           {mode === "Picture" && (
-            <PictureCanvas image={image} width={410} height={240} />
+            <PictureCanvas
+              image={image}
+              width={410}
+              height={240}
+              fitOrCover={fitOrCover}
+            />
           )}
         </div>
         <div className="flex justify-center">
