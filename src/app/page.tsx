@@ -20,7 +20,7 @@ export default function Home() {
             <button
               key={modeOption}
               data-active={mode === modeOption}
-              className="bg-white rounded-t-xl flex items-center gap-1.5 shadow-lg py-2 px-4 data-[active=true]:opacity-100 data-[active=false]:opacity-50"
+              className="bg-white rounded-t-lg flex items-center gap-1.5 shadow-lg py-2 px-4 data-[active=true]:opacity-100 data-[active=false]:opacity-50"
               onClick={() => setMode(modeOption)}
             >
               {modeOption}
@@ -32,10 +32,10 @@ export default function Home() {
             </button>
           ))}
         </div>
-        <div className="bg-white/50">
+        <div className="bg-white/50 rounded-lg rounded-tl-none">
           <div
             data-mode={mode}
-            className="bg-white rounded-lg shadow-lg p-6 pb-4 mb-6 data-[mode=Text]:rounded-tl-none min-h-[157.5px]"
+            className="bg-white rounded-lg shadow-lg p-6 py-4 mb-6 data-[mode=Text]:rounded-tl-none min-h-[157.5px]"
           >
             {mode === "Text" && (
               <>
