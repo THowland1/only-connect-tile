@@ -1,6 +1,7 @@
+/* eslint-disable @next/next/no-img-element */
 "use client";
 
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 
 interface TextCanvasProps {
   text: string;
@@ -22,7 +23,7 @@ export default function TextCanvas({
     const ctx = canvas.getContext("2d");
     if (!ctx) return;
 
-    const draw = (tileImage?: HTMLImageElement) => {
+    const draw = async (tileImage?: HTMLImageElement) => {
       // Clear canvas
       ctx.clearRect(0, 0, width, height);
 
@@ -62,6 +63,13 @@ export default function TextCanvas({
         const y = startY + index * lineHeight;
         ctx.fillText(line, centerX, y);
       });
+
+      canvas.toBlob((blob) => {
+        if (blob) {
+          setObjectUrl(URL.createObjectURL(blob));
+          (globalThis as unknown as { myBlob: Blob }).myBlob = blob;
+        }
+      });
     };
 
     const loadTileImage = () =>
@@ -90,14 +98,25 @@ export default function TextCanvas({
     };
 
     loadAndDraw();
-    canvas.toBlob((blob) => {
-      if (blob) {
-        (globalThis as unknown as { myBlob: Blob }).myBlob = blob;
-      }
-    });
   }, [text, width, height]);
+  const [objectUrl, setObjectUrl] = useState<string>("/default_410x240.png");
 
   return (
-    <canvas ref={canvasRef} width={width} height={height} className="w-full" />
+    <>
+      <canvas
+        ref={canvasRef}
+        width={width}
+        height={height}
+        className="sr-only"
+      />
+      <img
+        alt="Only Connect Tile"
+        id="canvas"
+        width={width}
+        height={height}
+        src={objectUrl}
+        className="w-full"
+      />
+    </>
   );
 }
