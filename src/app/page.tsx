@@ -7,7 +7,7 @@ import TextCanvas from "./components/TextCanvas";
 export default function Home() {
   const [text, setText] = useState("Hello World");
   const [image, setImage] = useState<HTMLImageElement | null>(null);
-  const [mode, setMode] = useState<"Text" | "Picture">("Text");
+  const [mode, setMode] = useState<"Text" | "Picture" | "?">("Text");
   const [fitOrCover, setFitOrCover] = useState<"fit" | "cover">("cover");
   return (
     <div className="min-h-screen bg-[#CCE7FA] py-8 px-4 text-[#143159]">
@@ -17,7 +17,7 @@ export default function Home() {
         </h1>
 
         <div className="flex overflow-hidden">
-          {(["Text", "Picture"] as const).map((modeOption) => (
+          {(["Text", "Picture", "?"] as const).map((modeOption) => (
             <button
               key={modeOption}
               data-active={mode === modeOption}
@@ -36,10 +36,10 @@ export default function Home() {
         <div className="bg-white/50 rounded-lg rounded-tl-none">
           <div
             data-mode={mode}
-            className="bg-white rounded-lg shadow-lg p-6 py-4 mb-6 data-[mode=Text]:rounded-tl-none min-h-[157.5px]"
+            className="bg-white rounded-lg shadow-lg p-6 py-4 mb-6 data-[mode=Text]:rounded-tl-none min-h-[174px]"
           >
             {mode === "Text" && (
-              <>
+              <div className="flex flex-col">
                 <div className="mb-2">
                   <label htmlFor="text-input" className="text-sm font-medium">
                     Enter your text:
@@ -49,13 +49,11 @@ export default function Home() {
                   id="text-input"
                   value={text}
                   onChange={(e) => setText(e.target.value)}
+                  rows={3}
                   className="w-full text-black px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                   placeholder="Type your text here..."
                 />
-                <p className="opacity-50 text-xs leading-none">
-                  You can type &quot;?&quot; for a connections round tile.
-                </p>
-              </>
+              </div>
             )}
             {mode === "Picture" && (
               <div
@@ -183,6 +181,7 @@ export default function Home() {
               fitOrCover={fitOrCover}
             />
           )}
+          {mode === "?" && <TextCanvas text="?" width={410} height={240} />}
         </div>
         <div className="flex justify-center">
           <button
