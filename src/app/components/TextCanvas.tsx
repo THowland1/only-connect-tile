@@ -56,18 +56,21 @@ export default function TextCanvas({
 
       if (text === "?") {
         ctx.fillText("?", centerX, centerY + 10);
-        return;
+      } else {
+        lines.forEach((line, index) => {
+          const y = startY + index * lineHeight;
+          ctx.fillText(line, centerX, y);
+        });
       }
-
-      lines.forEach((line, index) => {
-        const y = startY + index * lineHeight;
-        ctx.fillText(line, centerX, y);
-      });
 
       canvas.toBlob((blob) => {
         if (blob) {
           setObjectUrl(URL.createObjectURL(blob));
-          (globalThis as unknown as { myBlob: Blob }).myBlob = blob;
+          (globalThis as unknown as Record<"Text", Blob>).Text = blob;
+
+          if (text === "?") {
+            (globalThis as unknown as Record<"?", Blob>)["?"] = blob;
+          }
         }
       });
     };

@@ -16,7 +16,7 @@ export default function Home() {
           Only Connect Tile Generator
         </h1>
 
-        <div className="flex overflow-hidden">
+        <div className="flex overflow-hidden gap-0.5">
           {(["Text", "Picture", "?"] as const).map((modeOption) => (
             <button
               key={modeOption}
@@ -170,31 +170,35 @@ export default function Home() {
           </div>
         </div>
         <div className="flex justify-center flex-wrap gap-4">
-          {mode === "Text" && (
+          <div id="Text" hidden={mode !== "Text"} className="contents">
             <TextCanvas text={text} width={410} height={240} />
-          )}
-          {mode === "Picture" && (
+          </div>
+          <div id="Picture" hidden={mode !== "Picture"} className="contents">
             <PictureCanvas
               image={image}
               width={410}
               height={240}
               fitOrCover={fitOrCover}
             />
-          )}
-          {mode === "?" && <TextCanvas text="?" width={410} height={240} />}
+          </div>
+          <div id="QuestionMark" hidden={mode !== "?"} className="contents">
+            <TextCanvas text="?" width={410} height={240} />
+          </div>
         </div>
         <div className="flex justify-center">
           <button
             onClick={async (e) => {
-              const canvas = document.querySelector("canvas");
-              if (!canvas) return;
               try {
                 const btn = e.currentTarget;
 
                 await navigator.clipboard.write([
                   new ClipboardItem({
-                    "image/png": (globalThis as unknown as { myBlob: Blob })
-                      .myBlob,
+                    "image/png": (
+                      globalThis as unknown as Record<
+                        "Text" | "Picture" | "?",
+                        Blob
+                      >
+                    )[mode],
                   }),
                 ]);
                 const originalText = btn.textContent;

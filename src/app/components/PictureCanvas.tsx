@@ -104,7 +104,7 @@ export default function PictureCanvas({
       canvas.toBlob((blob) => {
         if (blob) {
           setObjectUrl(URL.createObjectURL(blob));
-          (globalThis as unknown as { myBlob: Blob }).myBlob = blob;
+          (globalThis as unknown as Record<"Picture", Blob>).Picture = blob;
         }
       });
     };
