@@ -27,7 +27,7 @@ export default function PictureCanvas({
 
     const draw = async (
       tileImage?: HTMLImageElement,
-      testCardImage?: HTMLImageElement
+      testCardImage?: HTMLImageElement,
     ) => {
       // Clear canvas
       ctx.clearRect(0, 0, width, height);
@@ -133,7 +133,7 @@ export default function PictureCanvas({
     loadAndDraw();
   }, [image, width, height, fitOrCover]);
   const [objectUrl, setObjectUrl] = useState<string>(
-    "/default-picture_410x240.png"
+    "/default-picture_410x240.png",
   );
 
   return (
@@ -162,7 +162,7 @@ function roundedRectPath(
   y: number,
   w: number,
   h: number,
-  r: number
+  r: number,
 ) {
   const min = Math.min(w, h);
   if (r <= 0) {
