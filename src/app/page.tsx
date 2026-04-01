@@ -18,7 +18,7 @@ export default function Home() {
         </h1>
 
         <div className="flex overflow-hidden gap-0.5">
-          {(["Text", "Picture", "Music", "?"] as const).map((modeOption) => (
+          {(["Text", "Picture", "?"] as const).map((modeOption) => (
             <button
               key={modeOption}
               data-active={mode === modeOption}
@@ -26,11 +26,6 @@ export default function Home() {
               onClick={() => setMode(modeOption)}
             >
               {modeOption}
-              {modeOption === "Music" && (
-                <span className="text-xs uppercase bg-blue-500 text-white rounded-full px-1.5 py-0.5 -mr-1">
-                  New
-                </span>
-              )}
             </button>
           ))}
         </div>
