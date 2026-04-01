@@ -1,13 +1,14 @@
 "use client";
 
 import { useState } from "react";
+import MusicCanvas from "./components/MusicCanvas";
 import PictureCanvas from "./components/PictureCanvas";
 import TextCanvas from "./components/TextCanvas";
 
 export default function Home() {
   const [text, setText] = useState("Hello World");
   const [image, setImage] = useState<HTMLImageElement | null>(null);
-  const [mode, setMode] = useState<"Text" | "Picture" | "?">("Text");
+  const [mode, setMode] = useState<"Text" | "Picture" | "Music" | "?">("Text");
   const [fitOrCover, setFitOrCover] = useState<"fit" | "cover">("cover");
   return (
     <div className="min-h-screen bg-[#CCE7FA] py-8 px-4 text-[#143159]">
@@ -17,7 +18,7 @@ export default function Home() {
         </h1>
 
         <div className="flex overflow-hidden gap-0.5">
-          {(["Text", "Picture", "?"] as const).map((modeOption) => (
+          {(["Text", "Picture", "Music", "?"] as const).map((modeOption) => (
             <button
               key={modeOption}
               data-active={mode === modeOption}
@@ -25,9 +26,9 @@ export default function Home() {
               onClick={() => setMode(modeOption)}
             >
               {modeOption}
-              {modeOption === "Picture" && (
+              {modeOption === "Music" && (
                 <span className="text-xs uppercase bg-blue-500 text-white rounded-full px-1.5 py-0.5 -mr-1">
-                  Beta
+                  New
                 </span>
               )}
             </button>
@@ -181,6 +182,9 @@ export default function Home() {
               fitOrCover={fitOrCover}
             />
           </div>
+          <div id="Music" hidden={mode !== "Music"} className="contents">
+            <MusicCanvas width={410} height={240} />
+          </div>
           <div id="QuestionMark" hidden={mode !== "?"} className="contents">
             <TextCanvas text="?" width={410} height={240} />
           </div>
@@ -195,14 +199,18 @@ export default function Home() {
                   new ClipboardItem({
                     "image/png": (
                       globalThis as unknown as Record<
-                        "Text" | "Picture" | "?",
+                        "Text" | "Picture" | "Music" | "?",
                         Blob
                       >
                     )[mode],
                   }),
                 ]);
                 const originalText = btn.textContent;
-                btn.textContent = "Copied!";
+                if (mode === "Music") {
+                  btn.textContent = "April Fools!";
+                } else {
+                  btn.textContent = "Copied!";
+                }
                 setTimeout(() => {
                   btn.textContent = originalText;
                 }, 2000);
@@ -216,11 +224,15 @@ export default function Home() {
           </button>
           <button
             onClick={async () => {
-              const canvas = document.querySelector("canvas");
-              if (!canvas) return;
+              const blob = (
+                globalThis as unknown as Record<
+                  "Text" | "Picture" | "Music" | "?",
+                  Blob
+                >
+              )[mode];
 
               try {
-                const dataUrl = canvas.toDataURL("image/png");
+                const dataUrl = URL.createObjectURL(blob);
                 const link = document.createElement("a");
                 link.download = "onlyconnect-tile.png";
                 link.href = dataUrl;
@@ -265,7 +277,7 @@ async function clipboardToImage(): Promise<HTMLImageElement | string> {
     return "Clipboard empty!";
   }
   const firstImageType = firstItem.types.find((type) =>
-    type.startsWith("image/")
+    type.startsWith("image/"),
   );
   if (!firstImageType) {
     return "No image in clipboard!";
@@ -275,6 +287,6 @@ async function clipboardToImage(): Promise<HTMLImageElement | string> {
     return "No image by type in clipboard!";
   }
   return fileToImage(
-    new File([image], `clipboard.${firstImageType.split("/")[1]}`)
+    new File([image], `clipboard.${firstImageType.split("/")[1]}`),
   );
 }
